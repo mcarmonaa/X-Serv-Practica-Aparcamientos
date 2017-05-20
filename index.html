@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="description" content="Parking app">
+  <meta name="keywords" content="HTML,CSS,XML,JavaScript,jQuery">
+  <meta name="author" content="Manuel Carmona">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+  <title>Madrid Parking</title>
+
+  <!-- Bootstrap -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+
+  <!-- Carousel extra styles -->
+  <link rel="stylesheet" href="css/carousel.css">
+
+  <!-- Leaflet styles -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css" />
+
+  <!-- My style -->
+  <link href="css/style.css" rel="stylesheet">
+
+</head>
+
+<body>
+  <div class="brand">
+    <img src="img/logo.jpg" class="img-circle" alt="Logo" width="204" height="136"> Madrid Parking
+  </div>
+  <div class="address-bar">Locating parking for residents in Madrid</div>
+
+  <!-- Navigation -->
+  <nav class="navbar navbar-default" role="navigation">
+    <div class="container">
+      <!-- Brand and toggle get grouped for better mobile display -->
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                  <span class="sr-only">Toggle navigation</span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+              </button>
+        <!-- navbar-brand is hidden on larger screens, but visible when the menu is collapsed -->
+        <a class="navbar-brand" href="index.html">Socios</a>
+      </div>
+      <!-- Collect the nav links, forms, and other content for toggling -->
+      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+        <ul class="nav navbar-nav">
+          <li>
+            <a id="maintab" class="tab">Main</a>
+          </li>
+          <li>
+            <a id="collectionstab" class="tab">Collections</a>
+          </li>
+          <li>
+            <a id="facilitiestab" class="tab">Facilities</a>
+          </li>
+        </ul>
+      </div>
+      <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+  </nav>
+
+  <div id="init-content" class="container-fluid">
+    <div class="box" style="height: 450px; overflow: auto; text-align: center;">
+      <h1>Madrid  Parking</h1>
+      <p>This is an app to locate and classify parking in Madrid city ... </p>
+      <p>You must click on the button to load facilities</p>
+      <button id="load-facilities" type="button" class="btn btn-primary btn-lg">Load Facilities</button>
+    </div>
+  </div>
+
+  <div id="content-placeholder" class="container-fluid">
+    <div class="col-md-4">
+      <div id="facilities-panel" class="panel panel-primary" style="height: 450px; overflow: auto; text-align: center;">
+        <div class="panel-heading">Facilities</div>
+        <!-- List group -->
+        <ul id="facilities-list" class="list-group">
+          <!-- <li class="list-group-item">Cras justo odio</li> -->
+        </ul>
+      </div>
+      <div id="collections-panel" class="panel panel-primary" style="height: 450px; overflow: auto; text-align: center;">
+        <div class="panel-heading">X Collection</div>
+        <!-- List group -->
+        <ul class="list-group">
+          <!-- <li class="list-group-item">Cras justo odio</li> -->
+        </ul>
+      </div>
+      <div class="container box box-buttons">
+        <button id="load" type="button" class="btn btn-info btn-lg">Load</button>
+        <button id="save" type="button" class="btn btn-success btn-lg">Save</button>
+      </div>
+    </div>
+    <div id="maintab-content" class="col-md-8"></div>
+    <div id="collectionstab-content" class="col-md-8"></div>
+    <div id="facilitiestab-content" class="col-md-8"></div>
+  </div>
+
+  <footer>
+    <nav class="navbar">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-12 text-center">
+            <p>Manuel Carmona 2017<a href='https://github.com/mcarmonaa'><i class="fa fa-github fa-3x fa-fw"></i></a></p>
+          </div>
+        </div>
+      </div>
+    </nav>
+  </footer>
+
+  <!-- jQuery-3.1.1 -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js" defer></script>
+
+  <!-- jQuery-UI-1.12.1 -->
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous" defer></script>
+
+  <!-- Include all compiled plugins (below), or include individual files as needed -->
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" defer></script>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js" defer></script>
+
+  <!-- Carousel -->
+  <!-- <script src="js/docs.min.js"></script> -->
+
+  <!-- My script -->
+  <script src="js/script.js" defer></script>
+</body>
+
+</html>
