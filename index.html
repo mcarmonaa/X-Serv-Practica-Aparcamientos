@@ -14,9 +14,6 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
 
-  <!-- Carousel extra styles -->
-  <link rel="stylesheet" href="css/carousel.css">
-
   <!-- Leaflet styles -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css" />
 
@@ -65,7 +62,7 @@
   </nav>
 
   <div id="init-content" class="container-fluid">
-    <div class="box" style="height: 450px; overflow: auto; text-align: center;">
+    <div id="init-box" class="box">
       <h1>Madrid  Parking</h1>
       <p>This is an app to locate and classify parking in Madrid city ... </p>
       <p>You must click on the button to load facilities</p>
@@ -75,17 +72,17 @@
 
   <div id="content-placeholder" class="container-fluid">
     <div class="col-md-4">
-      <div id="facilities-panel" class="panel panel-primary" style="height: 450px; overflow: auto; text-align: center;">
+      <div id="facilities-panel" class="panel panel-primary">
         <div class="panel-heading">Facilities</div>
         <!-- List group -->
         <ul id="facilities-list" class="list-group">
           <!-- <li class="list-group-item">Cras justo odio</li> -->
         </ul>
       </div>
-      <div id="collections-panel" class="panel panel-primary" style="height: 450px; overflow: auto; text-align: center;">
-        <div class="panel-heading">X Collection</div>
+      <div id="collections-panel" class="panel panel-primary">
+        <div id="collections-panel-name" class="panel-heading">X Collection</div>
         <!-- List group -->
-        <ul class="list-group">
+        <ul id="collections-list" class="list-group">
           <!-- <li class="list-group-item">Cras justo odio</li> -->
         </ul>
       </div>

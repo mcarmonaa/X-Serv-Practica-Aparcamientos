@@ -3,7 +3,11 @@
   var facilities;
   var myMap;
   var markers = [];
+  var collections = [];
+
+  var selectedFacility;
   var selectedMarker;
+  var selectedCollection;
 
   var setLeafletMap = function() {
     myMap = L.map('mapid').setView([40.4165000, -3.7025600], 13)
@@ -41,9 +45,8 @@
     if (num === 0) {
       active = 'active';
     }
-    console.log(active);
-    $('.carousel-indicators').append('<li class=" '+ active +'" data-target="#myCarousel" data-slide-to="' + num + '"></li>');
-    $('.carousel-inner').append('<div class="item  '+ active +'"><img src="' + image +'"></div>');
+    $('.carousel-indicators').append('<li class=" ' + active + '" data-target="#myCarousel" data-slide-to="' + num + '"></li>');
+    $('.carousel-inner').append('<div class="item  ' + active + '"><img src="' + image + '"></div>');
   };
 
   var setWikiImages = function(latitude, longitude) {
@@ -67,10 +70,13 @@
       });
   };
 
-  var setCarousel = function(latitude, longitude) {
+  var cleanCarousel = function() {
     $('.carousel-indicators').empty();
     $('.carousel-inner').empty();
+  };
 
+  var setCarousel = function(latitude, longitude) {
+    cleanCarousel();
     setWikiImages(latitude, longitude);
   };
 
@@ -93,9 +99,15 @@
     marker.bindPopup('<p>' + facility.title + '</p>');
     marker.on('click', function() {
       selectedMarker = marker;
+      selectedFacility = facility;
       showFacility(facility);
     });
     markers.push(marker);
+  };
+
+  var cleanInfo = function() {
+    $('#facility-info').empty();
+    cleanCarousel();
   };
 
   var removeMarker = function() {
@@ -125,6 +137,74 @@
     });
   };
 
+  var isInSelectedCollection = function(id) {
+    var found = false;
+    selectedCollection.facilities.forEach(function(element) {
+      if (element === id) {
+        found = true;
+        return;
+      }
+    });
+    return found;
+  }
+
+  var clickFacilityCallback = function() {
+    var address = $(this).text();
+    var facility = getFacilityByAddress(address);
+    selectedFacility = facility;
+    if (!hasMarker(facility)) {
+      setMarker(facility);
+    }
+    showFacility(facility);
+  };
+
+  var addToSelectedCollection = function(facility) {
+    if (!selectedCollection) {
+      return;
+    }
+
+    if (isInSelectedCollection(facility.id)) {
+      return;
+    }
+
+    selectedCollection.facilities.push(facility.id);
+    $('#collections-list').append('<li class="collections-item list-group-item ui-widget-content">' + facility.address['street-address'] + '</li>');
+    $('li.collections-item').click(clickFacilityCallback);
+  };
+
+  var getCollectionByName = function(name) {
+    var collection;
+    collections.forEach(function(element) {
+      if (element.name === name) {
+        collection = element;
+        return;
+      }
+    });
+    return collection;
+  };
+
+  var getFacilityById = function(id) {
+    var facility;
+    facilities.forEach(function(element) {
+      if (element.id === id) {
+        facility = element;
+        return;
+      }
+    });
+    return facility;
+  }
+
+  var loadPanelCollections = function() {
+    $('#collections-list').empty();
+
+    selectedCollection.facilities.forEach(function(id) {
+      var facility = getFacilityById(id);
+      $('#collections-list').append('<li class="collections-item list-group-item ui-widget-content">' + facility.address['street-address'] + '</li>');
+    });
+
+    $('li.collections-item').click(clickFacilityCallback);
+  };
+
   var loadMainTab = function() {
     if (!myMap) {
       setLeafletMap();
@@ -136,27 +216,45 @@
 
     $('#remove-marker').click(function() {
       if (removeMarker()) {
-        $('#facility-info').empty();
+        cleanInfo();
       }
     });
 
     $('#remove-all-markers').click(function() {
-      $('#facility-info').empty();
+      cleanInfo();
       removeAllMarkers();
     });
 
     $('#show-all-markers').click(function() {
-      $('#facility-info').empty();
+      cleanInfo();
       setAllMarkers();
     });
   };
 
   var loadCollectionsTab = function() {
+    $('#create-button').click(function() {
+      var name = $('#input-collection').val();
+      if (name) {
+        $('#input-collection').val('');
+      }
 
+      var collection = {
+        name: name,
+        facilities: []
+      };
+      collections.push(collection);
+
+      $('#all-collections-list').append('<li class="all-collections-item list-group-item ui-widget-content"><h3>' + collection.name + '</h3></li>');
+      $('li.all-collections-item').click(function() {
+        selectedCollection = getCollectionByName($(this.innerHTML).text());
+        $('#collections-panel-name').text(selectedCollection.name);
+        loadPanelCollections();
+      });
+    });
   };
 
   var loadFacilitiesTab = function() {
-
+    // console.log(collections);
   };
 
   $(document).ready(function() {
@@ -195,7 +293,7 @@
 
           $('li.facilities-item').draggable({
             cancel: 'a.ui-icon',
-            revert: 'invalid',
+            revert: true,
             containment: 'document',
             helper: 'clone',
             cursor: 'move',
@@ -204,15 +302,19 @@
             }
           });
 
-          $('li.facilities-item').click(function() {
-            var address = $(this).text();
-            var facility = getFacilityByAddress(address);
-            if (!hasMarker(facility)) {
-              setMarker(facility);
-            }
-            showFacility(facility);
-          });
+          $('li.facilities-item').click(clickFacilityCallback);
 
+          $('#collections-panel').droppable({
+            accept: 'li.facilities-item',
+            classes: {
+              'ui-droppable-active': 'ui-state-active',
+              'ui-droppable-hover': 'ui-state-hover'
+            },
+            drop: function(event, ui) {
+              var facility = getFacilityByAddress(ui.draggable.text());
+              addToSelectedCollection(facility);
+            }
+          });
 
           $('#maintab').click();
         })
