@@ -1,13 +1,18 @@
 (function() {
   'use strict';
+
+  // app status ////////////////////////////////////////////////////////////////
   var facilities;
   var myMap;
   var markers = [];
   var collections = [];
+  var assignments = [];
 
   var selectedFacility;
   var selectedMarker;
   var selectedCollection;
+  var selectedAssignment;
+  //////////////////////////////////////////////////////////////////////////////
 
   var setLeafletMap = function() {
     myMap = L.map('mapid').setView([40.4165000, -3.7025600], 13)
@@ -78,6 +83,13 @@
   var setCarousel = function(latitude, longitude) {
     cleanCarousel();
     setWikiImages(latitude, longitude);
+  };
+
+  var setFacilitiesTabInfo = function() {
+    $('#seleced-facility-info').empty();
+    $('#selected-facility-info').html('<h2>' + selectedFacility.title + '</h2>' +
+      '<p>' + selectedFacility.address['street-address'] + ', ' + selectedFacility.address['postal-code'] + ', ' + selectedFacility.address['locality'] + '</p>' +
+      '<p>' + selectedFacility.organization['organization-desc']);
   };
 
   var showFacility = function(facility) {
@@ -156,6 +168,7 @@
       setMarker(facility);
     }
     showFacility(facility);
+    setFacilitiesTabInfo();
   };
 
   var addToSelectedCollection = function(facility) {
@@ -254,7 +267,12 @@
   };
 
   var loadFacilitiesTab = function() {
-    // console.log(collections);
+    console.log(collections);
+    console.log(assignments);
+    console.log(selectedFacility);
+    if (selectedFacility) {
+      setFacilitiesTabInfo();
+    }
   };
 
   $(document).ready(function() {
@@ -286,6 +304,10 @@
           facilities.forEach(function(element) {
             if (element.location && element.address) {
               list.append('<li class="facilities-item list-group-item ui-widget-content">' + element.address['street-address'] + '</li>');
+              assignments.push({
+                id: element.id,
+                users: []
+              });
             }
           });
           $('#init-content').css('display', 'none');
