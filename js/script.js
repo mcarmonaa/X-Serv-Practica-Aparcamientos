@@ -1,3 +1,9 @@
+var googleApiOnLoad = function() {
+  'use strict';
+  var apiKey = 'AIzaSyDNq3PEgysmt8U3tVPZWFUtxBhDKOZ2LLw';
+  gapi.client.setApiKey(apiKey);
+};
+
 (function() {
   'use strict';
 
@@ -7,6 +13,7 @@
   var markers = [];
   var collections = [];
   var assignments = [];
+  var users = [];
 
   var selectedFacility;
   var selectedMarker;
@@ -15,7 +22,7 @@
   //////////////////////////////////////////////////////////////////////////////
 
   var setLeafletMap = function() {
-    myMap = L.map('mapid').setView([40.4165000, -3.7025600], 13)
+    myMap = L.map('mapid').setView([40.4165000, -3.7025600], 13);
 
     L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19,
@@ -50,23 +57,25 @@
     if (num === 0) {
       active = 'active';
     }
-    $('.carousel-indicators').append('<li class=" ' + active + '" data-target="#myCarousel" data-slide-to="' + num + '"></li>');
+    $('.carousel-indicators').append('<li class="' + active + '" data-target="#myCarousel" data-slide-to="' + num + '"></li>');
     $('.carousel-inner').append('<div class="item  ' + active + '"><img src="' + image + '"></div>');
   };
 
   var setWikiImages = function(latitude, longitude) {
     var url = 'https://commons.wikimedia.org/w/api.php?format=json&action=query&generator=geosearch&ggsprimary=all&ggsnamespace=6&' +
-      'ggsradius=500&ggscoord=' + latitude + '|' + longitude +
+      'ggsradius=50&ggscoord=' + latitude + '|' + longitude +
       '&ggslimit=10&prop=imageinfo&iilimit=1&iiprop=url&iiurlwidth=200&iiurlheight=200&callback=?';
 
 
     $.getJSON(url, function(json) {
-        var dic = json.query.pages;
-        var num = 0;
-        for (var key in dic) {
-          if (dic.hasOwnProperty(key)) {
-            addImageToCarousel(dic[key].imageinfo[0].thumburl, num);
-            num++;
+        if (json.query) {
+          var dic = json.query.pages;
+          var num = 0;
+          for (var key in dic) {
+            if (dic.hasOwnProperty(key)) {
+              addImageToCarousel(dic[key].imageinfo[0].thumburl, num);
+              num++;
+            }
           }
         }
       })
@@ -86,7 +95,7 @@
   };
 
   var setFacilitiesTabInfo = function() {
-    $('#seleced-facility-info').empty();
+    $('#selected-facility-info').empty();
     $('#selected-facility-info').html('<h2>' + selectedFacility.title + '</h2>' +
       '<p>' + selectedFacility.address['street-address'] + ', ' + selectedFacility.address['postal-code'] + ', ' + selectedFacility.address['locality'] + '</p>' +
       '<p>' + selectedFacility.organization['organization-desc']);
@@ -102,6 +111,22 @@
     myMap.flyTo(new L.LatLng(facility.location.latitude, facility.location.longitude), 19);
   };
 
+  var getAssignmentByFacilityId = function(id) {
+    var assignment;
+    assignments.forEach(function(element) {
+      if (element.id === id) {
+        assignment = element;
+        return;
+      }
+    });
+    return assignment;
+  };
+
+  var setSelectedAssignment = function(facilityId) {
+    selectedAssignment = getAssignmentByFacilityId(facilityId);
+    $('#assignments-panel-name').text(selectedFacility.address['street-address'] + ' \'s Assigments');
+  };
+
   var setMarker = function(facility) {
     if (!facility.location) {
       return;
@@ -112,6 +137,9 @@
     marker.on('click', function() {
       selectedMarker = marker;
       selectedFacility = facility;
+      setSelectedAssignment(facility.id);
+      setFacilitiesTabInfo();
+      loadSelectedAssignmentUsers();
       showFacility(facility);
     });
     markers.push(marker);
@@ -158,17 +186,33 @@
       }
     });
     return found;
-  }
+  };
+
+  var loadSelectedAssignmentUsers = function() {
+    if (!selectedAssignment) {
+      return;
+    }
+
+    var list = $('#assignments-list');
+    list.empty();
+    selectedAssignment.users.forEach(function(user) {
+      list.append('<li id="' + user.id + '" class="users-item list-group-item ui-widget-content">' +
+        '<img src="' + user.image + '">' + '<span>' + user.name + '</span>' +
+        '</li>');
+    });
+  };
 
   var clickFacilityCallback = function() {
     var address = $(this).text();
     var facility = getFacilityByAddress(address);
     selectedFacility = facility;
+    setSelectedAssignment(facility.id);
+    setFacilitiesTabInfo();
+    loadSelectedAssignmentUsers();
     if (!hasMarker(facility)) {
       setMarker(facility);
     }
     showFacility(facility);
-    setFacilitiesTabInfo();
   };
 
   var addToSelectedCollection = function(facility) {
@@ -205,7 +249,7 @@
       }
     });
     return facility;
-  }
+  };
 
   var loadPanelCollections = function() {
     $('#collections-list').empty();
@@ -266,13 +310,130 @@
     });
   };
 
-  var loadFacilitiesTab = function() {
-    console.log(collections);
-    console.log(assignments);
-    console.log(selectedFacility);
-    if (selectedFacility) {
-      setFacilitiesTabInfo();
+  var isInUsers = function(id) {
+    var found = false;
+    users.forEach(function(element) {
+      if (element.id === id) {
+        found = true;
+        return;
+      }
+    });
+    return found;
+  };
+
+  var requestGooglePlusUser = function(id) {
+    gapi.client.load('plus', 'v1', function() {
+      var requestUser = gapi.client.plus.people.get({
+        'userId': id
+      });
+
+      // user = {id:"234234", name: "adfa", image: "url.jpg"};
+      requestUser.execute(function(resp) {
+        var user = {
+          id: id,
+          name: resp.displayName,
+          image: resp.image.url
+        };
+
+        var item = $('<li id="' + user.id + '" class="users-item list-group-item ui-widget-content">' +
+          '<img src="' + user.image + '">' + '<span>' + user.name + '</span>' +
+          '</li>').draggable({
+          cancel: 'a.ui-icon',
+          revert: true,
+          containment: 'document',
+          helper: 'clone',
+          cursor: 'move',
+          cursorAt: {
+            left: 5
+          }
+        });
+
+        $('#users-list').append(item);
+        users.push(user);
+      });
+    });
+  };
+
+  var openWebSocketConn = function() {
+    try {
+      var host = 'ws://localhost:12345/';
+      console.log('Host:', host);
+
+      var s = new WebSocket(host);
+
+      s.onopen = function(open) {
+        console.log('Socket opened.', open);
+        $('#users-list').empty();
+      };
+
+      s.onclose = function(close) {
+        console.log('Socket closed.', close);
+      };
+
+      s.onmessage = function(message) {
+        console.log('Socket message:', message.data);
+        if (!isInUsers(message.data)) {
+          requestGooglePlusUser(message.data);
+        }
+      };
+
+      s.onerror = function(error) {
+        console.log('Socket error:', error);
+      };
+
+    } catch (ex) {
+      console.log('Socket exception:', ex);
     }
+  };
+
+  var isInSelectedAssignmentUsers = function(id) {
+    var found = false;
+    selectedAssignment.users.forEach(function(element) {
+      if (element.id === id) {
+        found = true;
+        return;
+      }
+    });
+    return found;
+  };
+
+  var getUserById = function(id) {
+    var user;
+    users.forEach(function(element) {
+      if (element.id === id) {
+        user = element;
+        return;
+      }
+    });
+    return user;
+  };
+
+  var addToSelectedAssignment = function(user) {
+    $('#assignments-list').append('<li id="' + user.id + '" class="users-item list-group-item ui-widget-content">' +
+      '<img src="' + user.image + '">' + '<span>' + user.name + '</span>' +
+      '</li>');
+  };
+
+  var loadFacilitiesTab = function() {
+    $('#assignments-panel').droppable({
+      accept: 'li.users-item',
+      classes: {
+        'ui-droppable-active': 'ui-state-active',
+        'ui-droppable-hover': 'ui-state-hover'
+      },
+      drop: function(event, ui) {
+        var id = ui.draggable.attr('id');
+        if (selectedAssignment && !isInSelectedAssignmentUsers(id)) {
+          var user = getUserById(id);
+          addToSelectedAssignment(user);
+          selectedAssignment.users.push(user);
+        }
+      }
+    });
+
+    $('#load-users').click(function() {
+      openWebSocketConn();
+    });
   };
 
   $(document).ready(function() {

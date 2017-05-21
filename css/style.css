@@ -51,7 +51,19 @@ hr {
 }
 
 #add-collection {
-  height: 450px;
+  height: 400px;
+  text-align: center;
+}
+
+#assignments-panel {
+  height: 800px;
+  overflow: auto;
+  text-align: center;
+}
+
+#users-panel {
+  height: 800px;
+  overflow: auto;
   text-align: center;
 }
 

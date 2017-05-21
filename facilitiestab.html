@@ -1,11 +1,21 @@
-<!-- <div class="box" style="height: 600px; overflow: auto;"></div> -->
-<!-- <div class="box" style="height: 225px; overflow: auto;"></div> -->
 <div id="selected-facility-info" class="jumbotron"></div>
 <div class="row">
   <div class="col-md-6">
-    <div class="box" style="height: 700px; overflow: auto;"></div>
+    <div id="assignments-panel" class="panel panel-primary">
+      <div id="assignments-panel-name" class="panel-heading">Assignments</div>
+      <!-- List group -->
+      <ul id="assignments-list" class="list-group"></ul>
+    </div>
   </div>
   <div class="col-md-6">
-    <div class="box" style="height: 700px; overflow: auto;"></div>
+    <div id="users-panel" class="panel panel-primary">
+      <div class="panel-heading">Users</div>
+      <!-- List group -->
+      <ul id="users-list" class="list-group">
+        <li class="list-group-item ui-widget-content">
+          <button id="load-users" type="button" class="btn btn-primary btn-lg">Load Users</button>
+        </li>
+      </ul>
+    </div>
   </div>
 </div>
