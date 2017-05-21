@@ -83,8 +83,25 @@
         <ul id="collections-list" class="list-group"></ul>
       </div>
       <div class="container box box-buttons">
-        <button id="load" type="button" class="btn btn-info btn-lg">Load</button>
-        <button id="save" type="button" class="btn btn-success btn-lg">Save</button>
+        <h3><button id="load-save-button" type="button" class="btn btn-primary btn-lg">LOAD/SAVE</button></h3>
+        <div id="github-form">
+          <p>
+            <label for="lastname">User</label>
+            <input type="text" id="github-user" class="github-input" />
+          </p>
+          <p>
+            <label for="lastname">Repo</label>
+            <input type="text" id="github-repo" class="github-input" />
+          </p>
+          <p>
+            <label for="lastname">Token</label>
+            <input type="password" id="github-token" class="github-input" />
+          </p>
+          <p>
+            <button id="load" type="button" class="btn btn-info btn-lg">Load</button>
+            <button id="save" type="button" class="btn btn-success btn-lg">Save</button>
+          </p>
+        </div>
       </div>
     </div>
     <div id="maintab-content" class="col-md-8"></div>
@@ -115,6 +132,9 @@
 
   <!-- Leaflet JS -->
   <script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js" defer></script>
+
+  <!-- Github API lib -->
+  <script src="js/github.js" defer></script>
 
   <!-- My script -->
   <script src="js/script.js" defer></script>

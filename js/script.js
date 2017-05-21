@@ -19,6 +19,9 @@ var googleApiOnLoad = function() {
   var selectedMarker;
   var selectedCollection;
   var selectedAssignment;
+
+  var collectionsFile = 'data/collections.json';
+  var assignmentsFile = 'data/assignments.json';
   //////////////////////////////////////////////////////////////////////////////
 
   var setLeafletMap = function() {
@@ -288,6 +291,15 @@ var googleApiOnLoad = function() {
     });
   };
 
+  var addCollection = function(collection) {
+    $('#all-collections-list').append('<li class="all-collections-item list-group-item ui-widget-content"><h3>' + collection.name + '</h3></li>');
+    $('li.all-collections-item').click(function() {
+      selectedCollection = getCollectionByName($(this.innerHTML).text());
+      $('#collections-panel-name').text(selectedCollection.name);
+      loadPanelCollections();
+    });
+  };
+
   var loadCollectionsTab = function() {
     $('#create-button').click(function() {
       var name = $('#input-collection').val();
@@ -300,13 +312,7 @@ var googleApiOnLoad = function() {
         facilities: []
       };
       collections.push(collection);
-
-      $('#all-collections-list').append('<li class="all-collections-item list-group-item ui-widget-content"><h3>' + collection.name + '</h3></li>');
-      $('li.all-collections-item').click(function() {
-        selectedCollection = getCollectionByName($(this.innerHTML).text());
-        $('#collections-panel-name').text(selectedCollection.name);
-        loadPanelCollections();
-      });
+      addCollection(collection);
     });
   };
 
@@ -436,6 +442,53 @@ var googleApiOnLoad = function() {
     });
   };
 
+  var loadAllCollections = function() {
+    collections.forEach(function(collection) {
+      addCollection(collection);
+    });
+  };
+
+  var requestGitHubFile = function(repo, file) {
+    repo.read('master', file, function(error, data) {
+      if (error) {
+        console.log('error reading from github', error);
+        $('#github-form').append('<p class="error" style="color: red;">ERROR!</p>');
+      } else {
+        if (file === collectionsFile) {
+          collections = JSON.parse(data);
+          selectedCollection = null;
+          $('#collections-panel-name').text('X Collection');
+          $('#collections-list').empty();
+          loadAllCollections();
+        }
+
+        if (file === assignmentsFile) {
+          assignments = JSON.parse(data);
+          selectedAssignment = null;
+          $('#assignments-panel-name').text('X Assignments');
+          $('#assignments-list').empty();
+        }
+      }
+
+    });
+  };
+
+  var postGitHubFile = function(repo, file, data) {
+    if (!data || data.length === 0) {
+      return;
+    }
+
+    repo.write('master', file,
+      JSON.stringify(data),
+      new Date().toLocaleString(),
+      function(error) {
+        if (error) {
+          console.log('error writing to github', error);
+          $('#github-form').append('<p class="error" style="color: red;">ERROR!</p>');
+        }
+      });
+  };
+
   $(document).ready(function() {
     var maintab = 'maintab';
     var collectionstab = 'collectionstab';
@@ -454,6 +507,36 @@ var googleApiOnLoad = function() {
           $('#' + tab + '-content').html('<div class="row box"><h1 style="text-align: center;">Could not load tab!</h1></div>');
           console.log('error');
         });
+    });
+
+    $('#load-save-button').click(function() {
+      $('#github-form').toggle();
+      $('.error').remove();
+    });
+
+    $('#load, #save').click(function() {
+      var userName = $('#github-user').val();
+      var repoName = $('#github-repo').val();
+      var token = $('#github-token').val();
+
+      var github = new Github({
+        token: token,
+        auth: 'oauth'
+      });
+
+      var repo = github.getRepo(userName, repoName);
+      var action = $(this).attr('id');
+
+      if (action === 'load') {
+        requestGitHubFile(repo, collectionsFile);
+        requestGitHubFile(repo, assignmentsFile);
+      }
+
+      if (action === 'save') {
+        postGitHubFile(repo, collectionsFile, collections);
+        postGitHubFile(repo, assignmentsFile, assignments);
+      }
+
     });
 
     $('#load-facilities').click(function() {
