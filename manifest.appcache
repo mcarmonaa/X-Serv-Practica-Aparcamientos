@@ -1,0 +1,15 @@
+CACHE MANIFEST
+# v3 - 2017-05-01
+index.html
+maintab.html
+collectionstab.html
+facilitiestab.html
+css/style.min.css
+js/script.min.js
+js/github.min.js
+img/bg.jpg
+img/logo.jpg
+json/facilities.json
+
+NETWORK:
+*

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html manifest="manifest.appcache">
 
 <head>
   <meta charset="utf-8">
@@ -15,10 +15,10 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
 
   <!-- Leaflet styles -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css" integrity="sha512-07I2e+7D8p6he1SIM+1twR5TIrhUQn9+I6yjqD53JQjFiMf8EtC93ty0/5vJTZGF8aAocvHYNEDJajGdNx1IsQ==" crossorigin="" />
 
   <!-- My style -->
-  <link href="css/style.css" rel="stylesheet">
+  <link href="css/style.min.css" rel="stylesheet">
 
 </head>
 
@@ -131,13 +131,13 @@
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" defer></script>
 
   <!-- Leaflet JS -->
-  <script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js" defer></script>
+  <script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js" integrity="sha512-A7vV8IFfih/D732iSSKi20u/ooOfj/AGehOKq0f4vLT1Zr2Y+RX7C+w8A1gaSasGtRUZpF/NZgzSAu4/Gc41Lg==" crossorigin="" defer></script>
 
   <!-- Github API lib -->
-  <script src="js/github.js" defer></script>
+  <script src="js/github.min.js" defer></script>
 
   <!-- My script -->
-  <script src="js/script.js" defer></script>
+  <script src="js/script.min.js" defer></script>
 
   <!-- Google APIs client -->
   <script src="https://apis.google.com/js/client:platform.js?onload=googleApiOnLoad" defer></script>
