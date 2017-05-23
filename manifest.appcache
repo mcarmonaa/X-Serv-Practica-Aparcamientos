@@ -1,5 +1,7 @@
 CACHE MANIFEST
-# v3 - 2017-05-01
+# v2 - 2017-05-01
+
+CACHE:
 index.html
 maintab.html
 collectionstab.html
@@ -10,6 +12,15 @@ js/github.min.js
 img/bg.jpg
 img/logo.jpg
 json/facilities.json
+
+//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css
+//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css
+//unpkg.com/leaflet@1.0.3/dist/leaflet.css
+//ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js
+//code.jquery.com/ui/1.12.1/jquery-ui.min.js
+//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js
+//unpkg.com/leaflet@1.0.3/dist/leaflet.js
+//apis.google.com/js/client:platform.js?onload=googleApiOnLoad
 
 NETWORK:
 *
