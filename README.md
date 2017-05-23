@@ -32,7 +32,7 @@ Github, no funcionará esa parte. Habría que levantar un servidor websocket y a
 
 ---
 ## URL vídeo en YouTube parte opcional
-[Vídeo parte básica](https://youtu.be/pG68gFa3-0s)
+[Vídeo parte opcional](https://youtu.be/pG68gFa3-0s)
 
 ---
 ## Opciones avanzadas implementadas
